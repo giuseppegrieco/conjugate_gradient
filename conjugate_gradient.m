@@ -1,6 +1,11 @@
-function x = conjugate_gradient(A, b, min_error)
+function x = conjugate_gradient(A, b, preconditioner, min_error)
     if ~exist('min_error', 'var')
-        min_error = 1e-3;
+        min_error = 1e-16;
+    end
+    
+    if exist('preconditioner', 'var')
+        [P, Pb, Px] = cg_preconditioner(A, b, preconditioner);
+        b = Pb;
     end
     
     N = length(b);
@@ -17,7 +22,11 @@ function x = conjugate_gradient(A, b, min_error)
     residuals = zeros(N);
     for i = 1:(N)
         % pre compute it to re-use in differents places %
-        Ap_n = A * p;
+        if ~exist('P', 'var')
+            Ap_n = A * p;
+        else
+            Ap_n = P(A, p);
+        end
         
         % Step length %
         a_n = residual / (p' * Ap_n);
@@ -55,4 +64,7 @@ function x = conjugate_gradient(A, b, min_error)
     semilogy([1:i], residuals(1:i));
     
     x = best_solution;
+    if exist('preconditioner', 'var')
+        x = Px(x);
+    end
 end

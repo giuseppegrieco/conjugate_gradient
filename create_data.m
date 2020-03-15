@@ -36,8 +36,8 @@ for arc = arcs
         mkdir(directory_name)
         for i = 1:iterations
             file_name = strcat('Example_',num2str(i));
-            [A, ~] = input_generator(100, arc, 1E-6, d, -100, 100);
-            save(strcat(directory_name,'/',file_name),'A'); 
+            [A, b] = input_generator(100, arc, 1E-6, d, -100, 100);
+            save(strcat(directory_name,'/',file_name),'A','b'); 
         end
     end
 end
