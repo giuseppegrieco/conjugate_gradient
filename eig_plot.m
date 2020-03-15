@@ -1,19 +1,19 @@
 function [] = eig_plot()
 
-[E, D, b] = input_generator(100, 1000, 1e-6, 1, 5, 10);
-A1 = sparse(E*inv(D)*E');
+[A, b] = input_generator(1000, 999, 1e-6, 1, 5, 10);
+A1 = A;
 G1 = abs(eig(A1));
 
-[EG, D, b] = input_generator(100, 1000, 1e-6, 100, 5, 10);
-A2 = sparse(E*inv(D)*E');
+[A, b] = input_generator(1000, 999, 1e-6, 1, 5, 10);
+A2 =  A;
 G2 = abs(eig(A2));
 
-[E, D, b] = input_generator(100, 99*50, 1e-6, 1, 5, 10);
-A3 = sparse(E*inv(D)*E');
+[A, b] = input_generator(1000, 999, 1e-6, 1, 5, 10);
+A3 = A;
 G3 = abs(eig(A3));
 
-[EG, D, b] = input_generator(100, 99*50, 1e-6, 100, 5, 10);
-A4 = sparse(E*inv(D)*E');
+[A, b] = input_generator(1000, 999, 1e-6, 1, 5, 10);
+A4 = A;
 G4 = abs(eig(A4));
 
 
@@ -25,28 +25,28 @@ tiledlayout(2,2)
 nexttile
 scatter(x_axis, G1);
 
-title(sprintf('Densità: %f, Distribuzione di D: uniforme(min:%.1E, max:%d)', nnz(A1) / (10000), 1e-6, 1), 'FontSize', 17);
+title(sprintf('Densitï¿½: %f, Distribuzione di D: uniforme(min:%.1E, max:%d)', nnz(A1) / (1000000), 1e-6, 1), 'FontSize', 17);
 set(gca,'yscale','log')
 xlabel('i-esimo autovalore', 'FontSize', 15)
 ylabel('log(|\lambda|)', 'FontSize', 15)
 
 nexttile
 scatter(x_axis, G2)
-title(sprintf('Densità: %f, Distribuzione di D: uniforme(min:%.1E, max:%d)', nnz(A2) / (10000), 1e-6, 100), 'FontSize', 17);
+title(sprintf('Densitï¿½: %f, Distribuzione di D: uniforme(min:%.1E, max:%d)', nnz(A2) / (1000000), 1e-6, 100), 'FontSize', 17);
 set(gca,'yscale','log')
 xlabel('i-esimo autovalore', 'FontSize', 15)
 ylabel('log(|\lambda|)', 'FontSize', 15)
 
 nexttile
 scatter(x_axis, G3)
-title(sprintf('Densità: %f, Distribuzione di D: uniforme(min:%.1E, max:%d)', nnz(A3) / (10000), 1e-6, 1), 'FontSize', 17);
+title(sprintf('Densitï¿½: %f, Distribuzione di D: uniforme(min:%.1E, max:%d)', nnz(A3) / (1000000), 1e-6, 1), 'FontSize', 17);
 set(gca,'yscale','log')
 xlabel('i-esimo autovalore', 'FontSize', 15)
 ylabel('log(|\lambda|)', 'FontSize', 15)
 
 nexttile
 scatter(x_axis, G4)
-title(sprintf('Densità: %f, Distribuzione di D: uniforme(min:%.1E, max:%d)', nnz(A4) / (10000), 1e-6, 100), 'FontSize', 17);
+title(sprintf('Densitï¿½: %f, Distribuzione di D: uniforme(min:%.1E, max:%d)', nnz(A4) / (1000000), 1e-6, 100), 'FontSize', 17);
 set(gca,'yscale','log')
 xlabel('i-esimo autovalore', 'FontSize', 15)
 ylabel('log(|\lambda|)', 'FontSize', 15)
