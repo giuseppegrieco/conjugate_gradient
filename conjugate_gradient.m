@@ -1,4 +1,4 @@
-function x = conjugate_gradient(A, b, preconditioner, min_error)
+function [x, residuals] = conjugate_gradient(A, b, preconditioner, min_error)
     if ~exist('min_error', 'var')
         min_error = 1e-16;
     end
@@ -61,7 +61,7 @@ function x = conjugate_gradient(A, b, preconditioner, min_error)
             break;
         end
     end
-    semilogy([1:i], residuals(1:i));
+    residuals = residuals(1:i);
     
     x = best_solution;
     if exist('preconditioner', 'var')
