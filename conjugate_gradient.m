@@ -1,4 +1,37 @@
 function [x, residuals] = conjugate_gradient(A, b, preconditioner, min_error)
+%function [x, residuals] = conjugate_gradient(A, b, preconditioner, min_error)
+%
+% This function is used to solve the linear system using Conjugate Gradient algorithm 
+%
+% Input:
+%
+% - A the coefficient matrix;
+%
+% - b the known terms vector;
+%
+% - preconditioner (integer between 0 and 2) to choose which preconditioner to use:
+%       = 0 for Jacobi preconditioner;
+%       = 1 for Incomplete LU preconditioner;
+%       = 2 for Incomplete Cholesky preconditioner.
+%
+% Output:
+%
+% - x (real column vector): the solution of the system;
+%
+% - residuals (real column vector): residuals generated during the
+% execution of Conjugate Gradient algorithm.
+%
+%
+%{
+ =======================================
+ Authors: Mattia Sangermano, Giuseppe Grieco
+ Date: 03-18-20
+ =======================================
+%}
+
+
+
+
     if ~exist('min_error', 'var')
         min_error = 1e-16;
     end

@@ -1,5 +1,45 @@
 function [A, b] = input_generator(vertex, edges, min_d, max_d, min_b, max_b)
 
+%function [A, b] = input_generator(vertex, edges, min_d, max_d, min_b, max_b)
+%
+% This function is used to generate the matrix A and the known terms vector
+%
+% Input:
+%
+% - vertex (integer): number of vertex of the graph;
+%
+% - edges (integer): number of edge of the graph;
+%
+% - min_d (real number): lower bound of the values in the diagonal of the
+% diagonal matrix
+%
+% - max_d (real number): upper bound of the values in the diagonal of the
+% diagonal matrix D
+%
+% - min_b (real number): lower bound of the values of the known term before
+% the projection on the span of A
+%
+% - max_b (real number): upper bound of the values of the known term before
+% the projection on the span of A
+
+% Output:
+%
+% - A ([n x m]): matrix genereted by E * D * E'
+%
+% - b (real column vector): the known terms vector of the system given by A;
+%
+%
+%
+%
+%{
+ =======================================
+ Authors: Mattia Sangermano, Giuseppe Grieco
+ Date: 03-18-20
+ =======================================
+%}
+
+
+
 % Check format input %d
 if ~exist('vertex', 'var')
     error("Insert vertex number")

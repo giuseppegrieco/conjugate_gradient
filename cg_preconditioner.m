@@ -30,7 +30,7 @@ function [P, Pb, Px] = cg_preconditioner(A, b, type)
 %{
  =======================================
  Authors: Giuseppe Grieco, Mattia Sangermano
- Date: 03-15-20
+ Date: 03-18-20
  =======================================
 %}
 
