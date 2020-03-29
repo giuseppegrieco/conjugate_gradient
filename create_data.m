@@ -1,4 +1,4 @@
-function [] = create_data(arcs,d_values,iterations)
+function [] = create_data(vertexes,arcs,d_values,iterations,iterations_b)
 %function [ ] = create_data( arcs, plot_title, iterations)
 %
 % Create all data needed for the experiments
@@ -29,15 +29,27 @@ function [] = create_data(arcs,d_values,iterations)
  =======================================
 %}
 
-
-for arc = arcs
-    for d = d_values
-        directory_name = strcat('./data/edge_',num2str(arc),'_dval_',num2str(d));
-        mkdir(directory_name)
-        for i = 1:iterations
-            file_name = strcat('Example_',num2str(i));
-            [A, b] = input_generator(100, arc, 1E-6, d, -100, 100);
-            save(strcat(directory_name,'/',file_name),'A','b'); 
+for vertex = vertexes
+    for arc = arcs
+        for d = d_values
+            directory_name = strcat('./data/vertex_',num2str(vertex),'_edge_',num2str(arc),'_dval_inf_',num2str(d(1)),'dval_sup',num2str(d(2)));
+            mkdir(directory_name)
+            for i = 1:iterations
+                file_name = strcat('Example_',num2str(i));
+                [A, b] = input_generator(vertex, arc, d(1), d(2), -100, 100);
+                save(strcat(directory_name,'/',file_name,'_b_0'),'A','b'); 
+                for j = 1:(iterations_b-1)
+                    b_hat = unifrnd(-100, 100, vertex, 1);
+                    kr = ones(vertex, 1);
+                    o_proj = ((b_hat' * kr) / norm(kr)^2) * kr;
+                    b = b_hat - o_proj;
+                    save(strcat(directory_name,'/',file_name,'_b_',num2str(j)),'A','b'); 
+                end
+                
+            end
         end
     end
 end
+
+
+
