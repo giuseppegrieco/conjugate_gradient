@@ -98,18 +98,63 @@ D = spdiags(inverse_diagonal(:), 0, edges, edges);
 s = floor(rand(1, vertex-1) .* (1:vertex-1)) + 1;
 t = 2:vertex;
 G = digraph(s, t, 'omitselfloops');
-iter = edges - vertex + 1;
 
-% Add iteratively all remains edges %
-while (iter > 0)
-    edge = randperm(vertex, 2);
-    s = edge(:, 1);
-    t = edge(:, 2);
-    check = findedge(G, s, t);
-    if check == 0
-        G = addedge(G, s, t);
-        iter = iter - 1;
+if edges > (vertex * (vertex - 1)) / 2
+    % Add spanning tree %
+    A_tree = adjacency(G);
+    A = ones(vertex, vertex);
+    s = find(A);
+    s_tree = find(A_tree);
+    s = setdiff(s, s_tree);
+    
+    % Set to zeros diagonal in order to prevent self loops %
+    d = zeros(vertex, 1);
+    d(1) = 1;
+    for i = 2:vertex
+        d(i) = d(i - 1) + vertex + 1;
     end
+    s = setdiff(s, d);
+    for i = 1:vertex
+        A(i, i) = 0;
+    end
+    
+    % Set to zeros arch not requested %
+    set_to_zero = randperm(length(s), (vertex * (vertex - 1)) - edges);    
+    for o = set_to_zero
+        j = ceil(s(o) / vertex);
+        i = mod(s(o), vertex);
+        if i == 0
+            i = vertex;
+        end
+        A(i, j) = 0;
+    end
+    G = digraph(A);
+else
+    % Add remains edge %
+    A = adjacency(G);
+
+    % Obtain possible edges to add %
+    s = find(~A);
+    d = zeros(vertex, 1);
+
+    % Remove diagonal to omit self loops %
+    d(1) = 1;
+    for i = 2:vertex
+        d(i) = d(i - 1) + vertex + 1;
+    end
+    s = setdiff(s, d);
+
+    % Generate random edges to add %
+    set_to_one = randperm(length(s), edges - vertex + 1);
+    for o = set_to_one
+        j = ceil(s(o) / vertex);
+        i = mod(s(o), vertex);
+        if i == 0
+            i = vertex;
+        end
+        A(i, j) = 1;
+    end
+    G = digraph(A);
 end
 
 E = incidence(G);
