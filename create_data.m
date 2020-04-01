@@ -37,7 +37,7 @@ for k = 1:lenvert(2)
             file_name = strcat('Example_',num2str(i));
             [A, b] = input_generator(vertexes(k), arcs(k), d(1), d(2), -100, 100);
             save(strcat(directory_name,'/',file_name,'_A'),'A','b'); 
-            save(strcat(directory_name,'/',file_name,'_b_0'),'A','b'); 
+            save(strcat(directory_name,'/',file_name,'_b_0'),'b'); 
             for j = 1:(iterations_b-1)
                 b_hat = unifrnd(-100, 100, vertexes(k), 1);
                 kr = ones(vertexes(k), 1);
