@@ -28,26 +28,23 @@ function [] = create_data(vertexes,arcs,d_values,iterations,iterations_b)
  Date: 03-15-20
  =======================================
 %}
-
-for vertex = vertexes
-    for arc = arcs
-        for d = d_values
-            directory_name = strcat('./data/vertex_',num2str(vertex),'_edge_',num2str(arc),'_dval_inf_',num2str(d(1)),'dval_sup',num2str(d(2)));
-            mkdir(directory_name)
-            for i = 1:iterations
-                file_name = strcat('Example_',num2str(i));
-                [A, b] = input_generator(vertex, arc, d(1), d(2), -100, 100);
-                save(strcat(directory_name,'/',file_name,'_b_0'),'A','b'); 
-                for j = 1:(iterations_b-1)
-                    b_hat = unifrnd(-100, 100, vertex, 1);
-                    kr = ones(vertex, 1);
-                    o_proj = ((b_hat' * kr) / norm(kr)^2) * kr;
-                    b = b_hat - o_proj;
-                    save(strcat(directory_name,'/',file_name,'_b_',num2str(j)),'A','b'); 
-                end
-                
-            end
+lenvert = size(vertexes);
+for k = 1:lenvert(2)
+    d = d_values(k,:);
+    directory_name = strcat('./data/vertex_',num2str(vertexes(k)),'_edge_',num2str(arcs(k)),'_dval_inf_',num2str(d(1)),'dval_sup',num2str(d(2)));
+    mkdir(directory_name)
+    for i = 1:iterations
+        file_name = strcat('Example_',num2str(i));
+        [A, b] = input_generator(vertexes(k), arcs(k), d(1), d(2), -100, 100);
+        save(strcat(directory_name,'/',file_name,'_b_0'),'A','b'); 
+        for j = 1:(iterations_b-1)
+            b_hat = unifrnd(-100, 100, vertexes(k), 1);
+            kr = ones(vertexes(k), 1);
+            o_proj = ((b_hat' * kr) / norm(kr)^2) * kr;
+            b = b_hat - o_proj;
+            save(strcat(directory_name,'/',file_name,'_b_',num2str(j)),'A','b'); 
         end
+
     end
 end
 
