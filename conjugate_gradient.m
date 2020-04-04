@@ -1,4 +1,4 @@
-function [x, residuals] = conjugate_gradient(A, b, preconditioner, min_error)
+function [x, residuals, time] = conjugate_gradient(A, b, preconditioner, min_error)
 %function [x, residuals] = conjugate_gradient(A, b, preconditioner, min_error)
 %
 % This function is used to solve the linear system using Conjugate Gradient algorithm 
@@ -37,7 +37,7 @@ if exist('preconditioner', 'var')
     [P, Pb, Px] = cg_preconditioner(A, b, preconditioner);
     b = Pb;
 end
-
+tic;
 N = length(b);
 x = zeros(size(b));
 r = b;
@@ -92,7 +92,7 @@ for i = 1:(N)
     end
 end
 residuals = residuals(1:i);
-
+time = toc;
 x = best_solution;
 if exist('preconditioner', 'var')
     x = Px(x);
