@@ -1,4 +1,4 @@
-function [A, b] = input_generator(vertex, edges, min_d, max_d, min_b, max_b)
+function [A,A1, b] = input_generator(vertex, edges, min_d, max_d, min_b, max_b, min_d1, max_d1)
 
 %function [A, b] = input_generator(vertex, edges, min_d, max_d, min_b, max_b)
 %
@@ -87,10 +87,14 @@ end
 
 % Generation of the diagonal matrix %
 diagonal = unifrnd(min_d, max_d, edges, 1);
+diagonal1 = unifrnd(min_d1, max_d1, edges, 1);
 
 % Computes inverse of diagonal %
 inverse_diagonal = 1./diagonal;
 D = spdiags(inverse_diagonal(:), 0, edges, edges);
+
+inverse_diagonal1 = 1./diagonal1;
+D1 = spdiags(inverse_diagonal1(:), 0, edges, edges);
 
 % Generation of the graph %
 
@@ -167,3 +171,4 @@ b = b_hat - o_proj;
 
 % Computes A %
 A = E*D*E';
+A1 = E*D1*E';

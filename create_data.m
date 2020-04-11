@@ -1,4 +1,4 @@
-function [] = create_data(vertexes,arcs,d_values,iterations,iterations_b)
+function [] = create_data(vertexes,arcs,iterations,iterations_b)
 %function [ ] = create_data( arcs, plot_title, iterations)
 %
 % Create all data needed for the experiments
@@ -30,21 +30,26 @@ function [] = create_data(vertexes,arcs,d_values,iterations,iterations_b)
 %}
 lenvert = size(vertexes);
 for k = 1:lenvert(2)
-    for d = d_values'
-        directory_name = strcat('./data/vertex_',num2str(vertexes(k)),'_edge_',num2str(arcs(k)),'_dval_inf_',num2str(d(1)),'dval_sup',num2str(d(2)));
-        mkdir(directory_name)
-        for i = 1:iterations
-            file_name = strcat('Example_',num2str(i));
-            [A, b] = input_generator(vertexes(k), arcs(k), d(1), d(2), -100, 100);
-            save(strcat(directory_name,'/',file_name,'_A'),'A','b'); 
-            save(strcat(directory_name,'/',file_name,'_b_0'),'b'); 
-            for j = 1:(iterations_b-1)
-                b_hat = unifrnd(-100, 100, vertexes(k), 1);
-                kr = ones(vertexes(k), 1);
-                o_proj = ((b_hat' * kr) / norm(kr)^2) * kr;
-                b = b_hat - o_proj;
-                save(strcat(directory_name,'/',file_name,'_b_',num2str(j)),'b'); 
-            end
+    directory_name1 = strcat('./data/vertex_',num2str(vertexes(k)),'_arcs_',num2str(arcs(k)),'_dval_inf_1_dval_sup_100');
+    directory_name2 = strcat('./data/vertex_',num2str(vertexes(k)),'_arcs_',num2str(arcs(k)),'_dval_inf_1E-06_dval_sup_1');
+    mkdir(directory_name1)
+    mkdir(directory_name2)
+    for i = 1:iterations
+        file_name_A1 = strcat('Example_',num2str(i));
+        file_name_A2 = strcat('Example_',num2str(i));
+        [A,A2, b] = input_generator(vertexes(k), arcs(k), 1, 100, -100, 100, 1E-06, 1);
+        save(strcat(directory_name1,'/',file_name_A1,'_A'),'A','b');
+        A = A2;
+        save(strcat(directory_name2,'/',file_name_A2,'_A'),'A','b'); 
+        save(strcat(directory_name1,'/',file_name_A1,'_b_0'),'b');
+        save(strcat(directory_name2,'/',file_name_A2,'_b_0'),'b');
+        for j = 1:(iterations_b-1)
+            b_hat = unifrnd(-100, 100, vertexes(k), 1);
+            kr = ones(vertexes(k), 1);
+            o_proj = ((b_hat' * kr) / norm(kr)^2) * kr;
+            b = b_hat - o_proj;
+            save(strcat(directory_name1,'/',file_name_A1,'_b_',num2str(j)),'b'); 
+            save(strcat(directory_name2,'/',file_name_A2,'_b_',num2str(j)),'b'); 
         end
     end
 end
