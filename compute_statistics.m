@@ -116,11 +116,11 @@ for i = 1:length(d) %per ogni dimensioni del grafo
         else
             d_range = 1;
         end
-       
+        
         fprintf(f,"\\multirow{4}{*}{$G_{%d, %d\\%%, %d}$} & No & (%.4f, %.4f) & (%.4f, %.4f) & (%.4f, %.4f) & %d \\\\ \\cline{2-6} \n", vertex, density, d_range, avg_execution_time_alg(4),variance_time_alg(4) , avg_step_time(4), variance_step_time(4),  avg_num_iterations(4), variance_num_iterations(4),num_of_divergences(4));
         fprintf(f,"& Jacobi & (%.4f, %.4f) & (%.4f, %.4f) & (%.4f, %.4f) & %d \\\\ \\cline{2-6}  \n", avg_execution_time_alg(1),variance_time_alg(1) , avg_step_time(1), variance_step_time(1),  avg_num_iterations(1), variance_num_iterations(1),num_of_divergences(1));
         fprintf(f,"& ILU & (%.4f, %.4f) & (%.4f, %.4f) & (%.4f, %.4f) & %d \\\\ \\cline{2-6} \n", avg_execution_time_alg(2),variance_time_alg(2) , avg_step_time(2), variance_step_time(2),  avg_num_iterations(2), variance_num_iterations(2),num_of_divergences(2));
-        fprintf(f,"& ICHOL & (%.4f, %.4f) & (%.4f, %.4f) & (%.4f, %.4f) & %d \\\\ \\hline \n", avg_execution_time_alg(4),variance_time_alg(4) , avg_step_time(3), variance_step_time(3),  avg_num_iterations(3), variance_num_iterations(3),num_of_divergences(3));
+        fprintf(f,"& ICHOL & (%.4f, %.4f) & (%.4f, %.4f) & (%.4f, %.4f) & %d \\\\ \\hline \n", avg_execution_time_alg(3),variance_time_alg(3) , avg_step_time(3), variance_step_time(3),  avg_num_iterations(3), variance_num_iterations(3),num_of_divergences(3));
         
         fprintf(f_g,"\\multirow{4}{*}{$G_{%d, %d\\%%, %d}$} & No & (%.4f, %.4f) & (%.4f, %.4f) & (%.4f, %.4f) & %d \\\\ \\cline{2-6} \n", vertex, density, d_range, avg_execution_time_alg(8),variance_time_alg(8) , avg_step_time(8), variance_step_time(8),  avg_num_iterations(8), variance_num_iterations(8),num_of_divergences(8));
         fprintf(f_g,"& Jacobi & (%.4f, %.4f) & (%.4f, %.4f) & (%.4f, %.4f) & %d\\\\ \\cline{2-6} \n", avg_execution_time_alg(5),variance_time_alg(5) , avg_step_time(5), variance_step_time(5),  avg_num_iterations(5), variance_num_iterations(5),num_of_divergences(5));
