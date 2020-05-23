@@ -1,4 +1,4 @@
-function [] = compute_experiments()
+function [] = compute_experiments(name_folder,num_different_example, num_different_b,min_error)
 
 %   prec 0: Jacobi
 %   prec 1: ILU
@@ -7,30 +7,32 @@ function [] = compute_experiments()
 %   prec 4: gmres Jacobi
 %   prec 5: gmres ILU
 %   prec 6: gmres Ichol
-%   prec 7: gmres no prec
-%
-%
-%
-%
+%   prec 7: gmres no pre
 
 
-d = dir('./data');
+data_directory = dir(strcat('./',name_folder));
+base_path_data_folder = strcat('./',name_folder,'/');
 
-for i = 1:length(d)
-    directory = d(i).name;
+for index_sub_directory = 1:length(data_directory)
+    directory = data_directory(index_sub_directory).name;
     if directory(1) ~= '.'
-        path = strcat('./data/',directory,'/results');
-        mkdir(path);
-        for k = 1:10
-            a_file = strcat('Example_',num2str(k),'_A');
-            load(strcat('./data/',directory,'/',a_file),'A'); 
-            for l = 0:4
-                b_file = strcat('Example_',num2str(k),'_b_',num2str(l));
-                load(strcat('./data/',directory,'/',b_file),'b');
+        path_results = strcat(base_path_data_folder,directory,'/results');
+        mkdir(path_results);
+        for index_example = 1:num_different_example
+
+            a_matrix_filename = strcat('Example_',num2str(index_example),'_A');
+            load(strcat(base_path_data_folder,directory,'/',a_matrix_filename),'A');
+            
+            for index_b = 0:num_different_b - 1 
+                b_vector_filename = strcat('Example_',num2str(index_example),'_b_',num2str(index_b));
+                load(strcat(base_path_data_folder,directory,'/',b_vector_filename),'b');
+
                 for preconditioner = 0:7
+                    
                     if preconditioner == 3
-                        [x, residuals, ~,time_alg] = conjugate_gradient(A, b);
+                        [x, residuals, ~, time_alg] = conjugate_gradient(A, b, min_error);
                         time_prec = 0;
+                        
                     elseif preconditioner >= 4
                         prec = preconditioner - 4 ;
                         if prec ~=3
@@ -41,21 +43,20 @@ for i = 1:length(d)
                             time_prec = toc(t_prec);
                             
                             t_alg = tic();
-                            [x,~,~,~,residuals] = gmres(f,Pb,[],1e-13,length(b));
+                            [x,~,~,~,residuals] = gmres(f,Pb,[],min_error,length(b));
                             time_alg = toc(t_alg);
                             x = Px(x);
 
                         else
                             time_prec = 0;
                             t_alg = tic();
-                            [x,~,~,~,residuals] = gmres(A,b,[],1e-13,length(b));
+                            [x,~,~,~,residuals] = gmres(A,b,[],min_error,length(b));
                             time_alg = toc(t_alg);
                         end
                     else
-                        [x, residuals, time_prec, time_alg] = conjugate_gradient(A, b, preconditioner);
+                        [x, residuals, time_prec, time_alg] = conjugate_gradient(A, b, min_error, preconditioner);
                     end
-                    
-                    save(strcat(path,'/','Results_prec_',num2str(preconditioner),'_',b_file),'x','residuals','time_prec','time_alg');
+                    save(strcat(path_results,'/','Results_prec_',num2str(preconditioner),'_',b_vector_filename),'x','residuals','time_prec','time_alg');
                 end
             end
         end

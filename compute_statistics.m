@@ -1,43 +1,36 @@
-function [] = compute_statistics()
+function [] = compute_statistics(data_path,output_gmres_path,output_cg_path)
 
-d = dir('./data');
+data_directory = dir(strcat(data_path));
 
-f_g = fopen('./output_gmres.txt','w');
+f_g = fopen(output_gmres_path,'w');
 
-f = fopen('./output_normal.txt','w');
+f = fopen(output_cg_path,'w');
 
-for i = 1:length(d) %per ogni dimensioni del grafo
-    directory = d(i).name;
+for index_graph_configuration = 1:length(data_directory) %per ogni dimensioni del grafo
+    directory_graph_configuration = data_directory(index_graph_configuration).name;
     variance_time_alg = zeros(8,1);
     avg_execution_time_alg = zeros(8,1);
-    avg_step_time = zeros(8,1);
-    avg_num_iterations = zeros(8,1);
     avg_executiom_time_prec = zeros(8,1);
-    min_time_directory = strings;
-    min_time_value = zeros(8,1);
-    max_time_directory = strings;
-    max_time_value = zeros(8,1);
+    avg_step_time = zeros(8,1);
     variance_step_time = zeros(8,1);
+    avg_num_iterations = zeros(8,1);
     variance_num_iterations = zeros(8,1);
-    for h = 1:length(min_time_value)
-    min_time_value(h) = realmax;
-    max_time_value(h) = realmin;
-    end
+    num_of_divergences = zeros(8,1); 
     
-    if directory(1) ~= '.'
-        vertex = cell2mat(extractBetween(directory,"vertex_","_arcs"));
-        edges = cell2mat(extractBetween(directory,"_arcs_","_dval_inf_"));
-        d_val_inf = cell2mat(extractBetween(directory,"_dval_inf_","_dval_sup_"));
-       
+    if directory_graph_configuration(1) ~= '.'
+        vertex = cell2mat(extractBetween(directory_graph_configuration,"vertex_","_arcs"));
         vertex = str2num(vertex);
+        
+        edges = cell2mat(extractBetween(directory_graph_configuration,"_arcs_","_dval_inf_"));
         edges = str2num(edges);
+        
+        d_val_inf = cell2mat(extractBetween(directory_graph_configuration,"_dval_inf_","_dval_sup_"));
         d_val_inf = str2num(d_val_inf);
        
 
-        for j = 0:7 % per ogni precondizionatore
-            path = strcat('./data/',directory,'/results/');
-            files = dir(strcat(path,'Results_prec_',num2str(j),'*'));
-            count = 0;
+        for preconditioner = 0:7 % per ogni precondizionatore
+            path = strcat(data_path,'/',directory_graph_configuration,'/results/');
+            files = dir(strcat(path,'Results_prec_',num2str(preconditioner),'*'));
             
             all_time_algorithm = [];
             all_time_preconditioner = [];
@@ -45,9 +38,8 @@ for i = 1:length(d) %per ogni dimensioni del grafo
             iters = [];
             total_iterations = 0;
             count_divergence = 0;
-            for k = 1:length(files) % per ogni esempio di un precondizionatore 
-                count = count + 1;
-                file = files(k).name;
+            for index_example = 1:length(files) % per ogni esempio di un precondizionatore 
+                file = files(index_example).name;
                 
                 if file(1) ~= '.'
                     load(strcat(path,file));
@@ -61,34 +53,25 @@ for i = 1:length(d) %per ogni dimensioni del grafo
                         all_time_iter = [all_time_iter, time_alg/length(residuals)];
                         all_time_algorithm = [all_time_algorithm,time_alg];
                         all_time_preconditioner = [all_time_preconditioner,time_prec];
-                        if time_alg < min_time_value(j + 1)
-                            min_time_value(j + 1) = time_alg; 
-                            min_time_directory(j+1) = file;
-                        end
-
-                        if time_alg > max_time_value(j+1)
-                            max_time_value(j+1) = time_alg;
-                            max_time_directory(j+1) = file;
-                        end
                     end
                         
                 end
             end
             
-            avg_num_iterations(j + 1) = mean(iters);
-            variance_num_iterations(j + 1) = var(iters);
-            avg_execution_time_alg(j + 1) = mean(all_time_algorithm);
-            variance_time_alg(j +1 ) = var(all_time_algorithm);
-            avg_executiom_time_prec(j+1) = mean(all_time_preconditioner);
-            avg_step_time(j + 1) = mean(all_time_iter);
-            variance_step_time(j + 1) = var(all_time_iter);
-            num_of_divergences(j + 1) = count_divergence;
+            avg_num_iterations(preconditioner + 1) = mean(iters);
+            variance_num_iterations(preconditioner + 1) = var(iters);
+            avg_execution_time_alg(preconditioner + 1) = mean(all_time_algorithm);
+            variance_time_alg(preconditioner +1 ) = var(all_time_algorithm);
+            avg_executiom_time_prec(preconditioner+1) = mean(all_time_preconditioner);
+            avg_step_time(preconditioner + 1) = mean(all_time_iter);
+            variance_step_time(preconditioner + 1) = var(all_time_iter);
+            num_of_divergences(preconditioner + 1) = count_divergence;
             
         end
         
         save(strcat(path,'statistics'),'avg_num_iterations','avg_execution_time_alg', ...
-        'variance_time_alg','avg_step_time','min_time_directory','max_time_directory',...
-        'avg_executiom_time_prec','variance_step_time','variance_num_iterations','num_of_divergences')
+        'variance_time_alg','avg_step_time','avg_executiom_time_prec', ...
+        'variance_step_time','variance_num_iterations','num_of_divergences')
         density = -1;
         switch edges
             case 50000
@@ -110,7 +93,7 @@ for i = 1:length(d) %per ogni dimensioni del grafo
             otherwise
                 display(class(edges))
         end
-        d_range = -1;
+        
         if d_val_inf == 1
             d_range = 2; 
         else
@@ -127,31 +110,6 @@ for i = 1:length(d) %per ogni dimensioni del grafo
         fprintf(f_g,"& ILU & (%.4f, %.4f) & (%.4f, %.4f) & (%.4f, %.4f) & %d \\\\ \\cline{2-6} \n", avg_execution_time_alg(6),variance_time_alg(6) , avg_step_time(6), variance_step_time(6),  avg_num_iterations(6), variance_num_iterations(6),num_of_divergences(6));
         fprintf(f_g,"& ICHOL & (%.4f, %.4f) & (%.4f, %.4f) & (%.4f, %.4f) & %d \\\\ \\hline \n", avg_execution_time_alg(7),variance_time_alg(7) , avg_step_time(7), variance_step_time(7),  avg_num_iterations(7), variance_num_iterations(7),num_of_divergences(7));
         
-        
-    
-    
-    
-    
-        %disp('avg_num_iterations')
-        %disp(avg_num_iterations)
-
-        %disp('avg_execution_time_alg')
-        %disp(avg_execution_time_alg)
-
-        %disp('variance_time_alg')
-        %disp(variance_time_alg)
-
-        %disp('avg_executiom_time_prec')
-        %disp(avg_executiom_time_prec)
-
-        %disp('avg_step_time')
-        %disp(avg_step_time)
-
-        %disp('min_directories')
-        %disp(min_time_directory)
-
-        %disp('max_directories')
-        %disp(max_time_directory)
     end
     
     

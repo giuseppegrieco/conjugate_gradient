@@ -1,4 +1,4 @@
-function [x, residuals, time_prec,time_alg] = conjugate_gradient(A, b, preconditioner, min_error)
+function [x, residuals, time_prec,time_alg] = conjugate_gradient(A, b, min_error, preconditioner )
 %function [x, residuals] = conjugate_gradient(A, b, preconditioner, min_error)
 %
 % This function is used to solve the linear system using Conjugate Gradient algorithm 
@@ -51,7 +51,7 @@ min_residual = sqrt(residual) / norm_b;
 min_iter = 1;
 
 residuals = zeros(N);
-nnz(A)
+residuals(1) = min_residual;
 for i = 1:(N)
     % pre compute it to re-use in differents places %
     if ~exist('P', 'var')
@@ -60,7 +60,6 @@ for i = 1:(N)
         Ap_n = P(A, p);
     end
     
-    nnz(Ap_n)
     
     % Step length %
     a_n = residual / (p' * Ap_n);
@@ -88,14 +87,14 @@ for i = 1:(N)
         min_residual = relative_residual;
         min_iter = i;
     end
-    residuals(i) = relative_residual;
+    residuals(i + 1) = relative_residual;
     if (relative_residual < min_error) || (i == N)
         fprintf("Conjugate gradient converged at iteration %d to a solution with relative residual %.1E. \n", i, relative_residual);
         fprintf("The iterate returned (number %d) has relative residual %.1E.\n", min_iter, min_residual);
         break;
     end
 end
-residuals = residuals(1:i);
+residuals = residuals(1:i + 1);
 
 time_alg = toc(t_alg);
 x = best_solution;
