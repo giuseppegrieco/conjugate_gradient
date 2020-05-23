@@ -51,6 +51,7 @@ min_residual = sqrt(residual) / norm_b;
 min_iter = 1;
 
 residuals = zeros(N);
+nnz(A)
 for i = 1:(N)
     % pre compute it to re-use in differents places %
     if ~exist('P', 'var')
@@ -58,7 +59,9 @@ for i = 1:(N)
     else
         Ap_n = P(A, p);
     end
-
+    
+    nnz(Ap_n)
+    
     % Step length %
     a_n = residual / (p' * Ap_n);
     % Approximate solution %

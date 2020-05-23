@@ -1,4 +1,4 @@
-function [] = create_data(vertexes,arcs,iterations,iterations_b)
+, function [] = create_data(vertexes,arcs,iterations,iterations_b)
 %function [ ] = create_data( arcs, plot_title, iterations)
 %
 % Create all data needed for the experiments
@@ -37,7 +37,7 @@ for k = 1:lenvert(2)
     for i = 1:iterations
         file_name_A1 = strcat('Example_',num2str(i));
         file_name_A2 = strcat('Example_',num2str(i));
-        [A,A2, b] = input_generator(vertexes(k), arcs(k), 1, 100, -100, 100, 1E-06, 1);
+        [A,A2, b] = input_gen2020-04-15-Note-16-47erator(vertexes(k), arcs(k), 1, 100, -100, 100, 1E-06, 1);
         save(strcat(directory_name1,'/',file_name_A1,'_A'),'A','b');
         A = A2;
         save(strcat(directory_name2,'/',file_name_A2,'_A'),'A','b'); 

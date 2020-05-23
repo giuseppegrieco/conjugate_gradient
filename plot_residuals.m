@@ -12,4 +12,4 @@ for preconditioner = [0, 1, 2]
     semilogy((1:n), residuals);
 end
 hold off
-legend('No preconditioner', 'Jacobi', 'Incomplete LU', 'Incomplete Cholesky')
+legend('No prec', 'Jacobi', 'ILU', 'I. Cholesky')
