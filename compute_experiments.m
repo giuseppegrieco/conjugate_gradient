@@ -17,14 +17,14 @@ for index_sub_directory = 1:length(data_directory)
     directory = data_directory(index_sub_directory).name;
     if directory(1) ~= '.'
         load(strcat(base_path_data_folder,directory),'A','b');
-        for preconditioner = 0:7
+        for preconditioner = 0:5
 
-            if preconditioner == 3
+            if preconditioner == 2
                 [x, residuals, ~, time_alg] = conjugate_gradient(A, b, min_error);
                 time_prec = 0;
 
-            elseif preconditioner >= 4
-                prec = preconditioner - 4 ;
+            elseif preconditioner >= 3
+                prec = preconditioner - 3 ;
                 if prec ~=3
                     
                     t_prec = tic();
