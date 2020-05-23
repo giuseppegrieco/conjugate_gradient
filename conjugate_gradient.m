@@ -50,7 +50,7 @@ best_solution = x;
 min_residual = sqrt(residual) / norm_b;
 min_iter = 1;
 
-residuals = zeros(N);
+residuals = zeros(N + 1);
 residuals(1) = min_residual;
 for i = 1:(N)
     % pre compute it to re-use in differents places %
