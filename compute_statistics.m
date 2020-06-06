@@ -1,10 +1,48 @@
-function [] = compute_statistics(data_path,output_gmres_path,output_cg_path)
+function [] = compute_statistics(data_path,output_cg_path)
 
-data_directory = dir(strcat(data_path));
+    all_vertexes = [1024,4096,16384];
+    all_edges = [[8192,32768,65536];[32768,262144,1048576];[131072,1048576,-1]];
 
-f_g = fopen(output_gmres_path,'w');
+    f = fopen(output_cg_path,'w');
 
-f = fopen(output_cg_path,'w');
+    i = 1;
+    for vertex = all_vertexes
+        edges = all_edges(i,:);
+        for edge = edges
+            if(edge ~= -1)
+                all_time_algorithm = [];
+                all_time_preconditioner = [];
+                all_iters = [];
+                for preconditioner = 0:5
+                    time_algorithm = 0;
+                    time_preconditioner = 0;
+                    iters = 0;
+                    for iter = 1:5  
+                        file = strcat(data_path,'goto_',num2str(vertex),'_',num2str(edge),'_',num2str(iter),'_prec_',num2str(preconditioner));
+                        load(file);
+
+                        [~,num_iter] = min(residuals);
+
+                        iters = iters + num_iter;
+                        time_algorithm = time_algorithm + time_alg;
+                        time_preconditioner = time_preconditioner + time_prec;
+
+                    end
+
+                    all_time_algorithm(preconditioner + 1) = time_algorithm / 5;
+                    all_time_preconditioner(preconditioner + 1) = time_preconditioner / 5;
+                    all_iters(preconditioner + 1) = iters / 5; 
+
+                end
+
+                fprintf(f,'{$goto-%.4f-%.4f$} & %.4f & %.4f & %.4f & %.4f & %.4f & %.4f \\ \hline',log2(vertex),edge/vertex,all_time_algorithm(3),all_iters(3),all_time_algorithm(1),all_iters(1),all_time_algorithm(2),all_iters(2));
+            end
+        end
+    end
+end
+
+
+%{
 
 for index_graph_configuration = 1:length(data_directory) %per ogni dimensioni del grafo
     directory_graph_configuration = data_directory(index_graph_configuration).name;
@@ -18,19 +56,21 @@ for index_graph_configuration = 1:length(data_directory) %per ogni dimensioni de
     num_of_divergences = zeros(6,1); 
     
     if directory_graph_configuration(1) ~= '.'
-        vertex = cell2mat(extractBetween(directory_graph_configuration,"vertex_","_arcs"));
+        split = split(directory_graph_configuration,"_");
+        
+        vertex = cell2mat(split(2));
         vertex = str2num(vertex);
         
-        edges = cell2mat(extractBetween(directory_graph_configuration,"_arcs_","_dval_inf_"));
+        edges = cell2mat(split(3));
         edges = str2num(edges);
         
-        d_val_inf = cell2mat(extractBetween(directory_graph_configuration,"_dval_inf_","_dval_sup_"));
-        d_val_inf = str2num(d_val_inf);
+        example_number = cell2mat(split(4));
+        example_number = str2num(example_number);
        
 
         for preconditioner = 0:5 % per ogni precondizionatore
-            path = strcat(data_path,'/',directory_graph_configuration,'/results/');
-            files = dir(strcat(path,'Results_prec_',num2str(preconditioner),'*'));
+            path = strcat(data_path);
+            files = dir(strcat(path,'goto_','*','_prec_',num2str(preconditioner),'*'));
             
             all_time_algorithm = [];
             all_time_preconditioner = [];
@@ -72,33 +112,7 @@ for index_graph_configuration = 1:length(data_directory) %per ogni dimensioni de
         save(strcat(path,'statistics'),'avg_num_iterations','avg_execution_time_alg', ...
         'variance_time_alg','avg_step_time','avg_executiom_time_prec', ...
         'variance_step_time','variance_num_iterations','num_of_divergences')
-        density = -1;
-        switch edges
-            case 50000
-                density = 10;
-            case 292000
-                density = 50;
-            case 680000
-                density = 90;
-            case 12500
-                density = 10;
-            case 73000
-                density = 50;
-            case 170000
-                density = 90;
-            case 250000
-                density = 1;
-            case 500000
-                density = 1;
-            otherwise
-                display(class(edges))
-        end
-        
-        if d_val_inf == 1
-            d_range = 2; 
-        else
-            d_range = 1;
-        end
+        density = vertex / edges;
         
         fprintf(f,"\\multirow{4}{*}{$G_{%d, %d\\%%, %d}$} & No & (%.4f, %.4f) & (%.4f, %.4f) & (%.4f, %.4f) & %d \\\\ \\cline{2-6} \n", vertex, density, d_range, avg_execution_time_alg(3),variance_time_alg(3) , avg_step_time(3), variance_step_time(3),  avg_num_iterations(3), variance_num_iterations(3),num_of_divergences(3));
         fprintf(f,"& Jacobi & (%.4f, %.4f) & (%.4f, %.4f) & (%.4f, %.4f) & %d \\\\ \\cline{2-6}  \n", avg_execution_time_alg(1),variance_time_alg(1) , avg_step_time(1), variance_step_time(1),  avg_num_iterations(1), variance_num_iterations(1),num_of_divergences(1));
@@ -111,11 +125,9 @@ for index_graph_configuration = 1:length(data_directory) %per ogni dimensioni de
     end
     
     
-end
 
 
-
-
+%}
 
 
 
