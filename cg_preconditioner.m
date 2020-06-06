@@ -43,14 +43,16 @@ switch (type)
         P = @(A, x) C \ (A * (C' \ x));
         Pb = C \ b;
         Px = @(x) C' \ x;
-    % Incomplete LU preconditioner %
+    %{
+    % Incomplete LU preconditioner 
     case 1
         [L, U] = ilu(A);
         P = @(A, x) U \ (L \ (A * x));
         Pb = (L * U) \ b;
         Px = @(x) x;
+    %}
     % Cholesky preconditioner %
-    case 2
+    case 1
         L = ichol(A);
         P = @(A, x) L \ (A * (L' \ x));
         Pb = L \ b;

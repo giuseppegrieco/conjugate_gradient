@@ -2,6 +2,7 @@ function [] = parse_gridgen()
     directory = dir("./gridgen");
     for file_idx = 1:length(directory)
         file_name = directory(file_idx).name;
+        file_name
         if file_name ~= "." && file_name ~= ".."
             file_path = strcat("./gridgen/", directory(file_idx).name);
             fid = fopen(file_path);

@@ -60,7 +60,6 @@ for i = 1:(N)
         Ap_n = P(A, p);
     end
     
-    
     % Step length %
     a_n = residual / (p' * Ap_n);
     % Approximate solution %

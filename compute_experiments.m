@@ -25,7 +25,7 @@ for index_sub_directory = 1:length(data_directory)
 
             elseif preconditioner >= 3
                 prec = preconditioner - 3 ;
-                if prec ~=3
+                if prec ~= 2
                     
                     t_prec = tic();
                     [P, Pb, Px] = cg_preconditioner(A, b, prec);
